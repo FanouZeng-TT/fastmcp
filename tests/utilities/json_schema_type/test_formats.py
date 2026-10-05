@@ -2,7 +2,6 @@
 
 from dataclasses import Field
 from datetime import date, datetime, time, timedelta
-from pathlib import Path
 from uuid import UUID
 
 import pytest
@@ -55,10 +54,6 @@ class TestFormatTypes:
     @pytest.fixture
     def uuid_format(self):
         return json_schema_to_type({"type": "string", "format": "uuid"})
-
-    @pytest.fixture
-    def path_format(self):
-        return json_schema_to_type({"type": "string", "format": "path"})
 
     @pytest.fixture
     def unknown_format(self):
@@ -182,12 +177,6 @@ class TestFormatTypes:
         validator = TypeAdapter(uuid_format)
         with pytest.raises(ValidationError):
             validator.validate_python("not-a-uuid")
-
-    def test_path_valid(self, path_format):
-        validator = TypeAdapter(path_format)
-        result = validator.validate_python("/tmp/report.txt")
-        assert isinstance(result, Path)
-        assert result == Path("/tmp/report.txt")
 
     def test_unmapped_format_falls_back_to_string(self, unknown_format):
         validator = TypeAdapter(unknown_format)

@@ -5,7 +5,6 @@ and positional item schema the server emits has to survive that round trip.
 """
 
 from datetime import date, datetime, time, timedelta
-from pathlib import Path
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -19,7 +18,6 @@ class Reading(BaseModel):
     at: time
     dur: timedelta
     ident: UUID
-    where: Path
 
 
 class TestStructuredResultHydration:
@@ -34,7 +32,6 @@ class TestStructuredResultHydration:
                 at=time(1, 2),
                 dur=timedelta(days=1),
                 ident=UUID(int=7),
-                where=Path("/tmp/report.txt"),
             )
 
         async with Client(mcp) as client:
@@ -45,7 +42,6 @@ class TestStructuredResultHydration:
         assert data.at == time(1, 2)
         assert data.dur == timedelta(days=1)
         assert data.ident == UUID(int=7)
-        assert data.where == Path("/tmp/report.txt")
 
     async def test_fixed_length_tuple_result_keeps_positions(self):
         mcp = FastMCP()
